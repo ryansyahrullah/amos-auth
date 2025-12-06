@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"amos-auth/internal/core/platform"
+	"amk-api-go/internal/core/platform"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
