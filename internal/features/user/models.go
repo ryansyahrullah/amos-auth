@@ -2,8 +2,6 @@ package user
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Permission struct {
@@ -34,7 +32,6 @@ type User struct {
 	Role          Role   `gorm:"foreignKey:RoleID;constraint:OnDelete:CASCADE"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
-	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 type RefreshToken struct {

@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+	"time"
+
+	"amos-auth/internal/core/platform"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -241,6 +245,31 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
+
+	skipSync := c.Query("skip_sync") == "true"
+	if !skipSync {
+		// Call HCGS Service to delete linked pegawai
+		hcgsURL := os.Getenv("HCGS_SERVICE_URL")
+		if hcgsURL == "" {
+			hcgsURL = "http://localhost:8081"
+		}
+		systemToken, _ := platform.GenerateToken(0, "super_admin")
+
+		client := &http.Client{Timeout: 5 * time.Second}
+		req, _ := http.NewRequest("DELETE", fmt.Sprintf("%s/hcgs/pegawai/user/%d", hcgsURL, id), nil)
+		req.Header.Set("Authorization", "Bearer "+systemToken)
+
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Printf("[ERROR] Failed to sync delete pegawai: %v\n", err)
+		} else {
+			defer resp.Body.Close()
+			if resp.StatusCode != http.StatusOK {
+				log.Printf("[ERROR] HCGS service returned %d during sync delete\n", resp.StatusCode)
+			}
+		}
+	}
+
 	if err := h.repo.DeleteUser(uint(id)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
 		return
