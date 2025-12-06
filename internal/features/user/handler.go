@@ -253,7 +253,7 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 		if hcgsURL == "" {
 			hcgsURL = "http://localhost:8081"
 		}
-		systemToken, _ := platform.GenerateToken(0, "super_admin")
+		systemToken, _ := platform.GenerateToken(0, "super_admin", nil)
 
 		client := &http.Client{Timeout: 5 * time.Second}
 		req, _ := http.NewRequest("DELETE", fmt.Sprintf("%s/hcgs/pegawai/user/%d", hcgsURL, id), nil)
