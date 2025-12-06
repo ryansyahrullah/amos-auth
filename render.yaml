@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: amk-api-go
+    runtime: docker
+    region: singapore
+    plan: free # Or starter/standard depending on needs, free is good for testing
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: TZ
+        value: Asia/Jakarta
+      # Add other environment variables here or in the Render dashboard
+      # - key: DATABASE_URL
+      #   sync: false
+      # - key: JWT_SECRET
+      #   sync: false
+      # - key: GCS_CREDENTIALS_JSON
+      #   sync: false

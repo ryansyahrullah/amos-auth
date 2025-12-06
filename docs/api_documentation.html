@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMK API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #334155;
+            --text-heading: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            
+            /* Method Colors */
+            --get-bg: #dcfce7;
+            --get-text: #15803d;
+            --post-bg: #dbeafe;
+            --post-text: #1d4ed8;
+            --put-bg: #fef3c7;
+            --put-text: #b45309;
+            --delete-bg: #fee2e2;
+            --delete-text: #b91c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            display: flex;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-sidebar);
+            color: #94a3b8;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 0;
+            border-right: 1px solid #334155;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar h2 {
+            color: #f8fafc;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background-color: #1e293b;
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        .nav-links a.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 3rem 4rem;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--text-heading);
+            margin-bottom: 1rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            color: var(--text-heading);
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: var(--text-heading);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+            font-size: 0.95rem;
+        }
+
+        .alert-info {
+            background-color: #eff6ff;
+            border-color: var(--primary);
+            color: #1e40af;
+        }
+
+        .alert-warning {
+            background-color: #fffbeb;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            background: var(--bg-card);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Method Badges */
+        .method {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            min-width: 80px;
+            letter-spacing: 0.05em;
+        }
+
+        .get { background-color: var(--get-bg); color: var(--get-text); }
+        .post { background-color: var(--post-bg); color: var(--post-text); }
+        .put { background-color: var(--put-bg); color: var(--put-text); }
+        .delete { background-color: var(--delete-bg); color: var(--delete-text); }
+
+        /* Code Blocks */
+        .code-block {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        p code {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+            border: 1px solid #e2e8f0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e2e8f0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>AMK API</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#auth">Authentication</a></li>
+            <li><a href="#users">User Management</a></li>
+            <li><a href="#master">HCGS Master Data</a></li>
+            <li><a href="#employee">HCGS Employee Data</a></li>
+            <li><a href="#salary">Salary Slips</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <section id="intro">
+            <h1>AMK API Documentation</h1>
+            <p class="lead">Comprehensive API reference for the AMK Management System.</p>
+            
+            <div class="card">
+                <div class="alert alert-info" style="margin-bottom: 1rem;">
+                    <strong>Base URL:</strong> <code>http://localhost:8080</code> (Development)
+                </div>
+                <div class="alert alert-warning" style="margin-bottom: 0;">
+                    <strong>Authentication:</strong> All endpoints (except Auth) require a Bearer Token.<br>
+                    Header: <code>Authorization: Bearer &lt;token&gt;</code>
+                </div>
+            </div>
+        </section>
+
+        <section id="auth">
+            <h2>1. Authentication</h2>
+            <p>Endpoints for user authentication and session management.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/auth/login</code></td>
+                            <td>Login to get JWT token</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/auth/forgot-password</code></td>
+                            <td>Request password reset (sends OTP)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/auth/verify-otp</code></td>
+                            <td>Verify OTP code</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/auth/reset-password</code></td>
+                            <td>Reset password using OTP</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="users">
+            <h2>2. User Management</h2>
+            <p>Management of system users, roles, and permissions.</p>
+
+            <h3>Table: <code>users</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Description</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/users/</code></td>
+                            <td>Create new user</td>
+                            <td><code>user.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/users/</code></td>
+                            <td>Get all users</td>
+                            <td><code>user.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/users/:id</code></td>
+                            <td>Get user by ID</td>
+                            <td><code>user.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/users/:id</code></td>
+                            <td>Update user</td>
+                            <td><code>user.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/users/:id</code></td>
+                            <td>Delete user</td>
+                            <td><code>user.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>roles</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Description</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/users/roles/</code></td>
+                            <td>Create new role</td>
+                            <td><code>role.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/users/roles/</code></td>
+                            <td>Get all roles</td>
+                            <td><code>role.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/users/roles/:id</code></td>
+                            <td>Update role</td>
+                            <td><code>role.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/users/roles/:id</code></td>
+                            <td>Delete role</td>
+                            <td><code>role.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>permissions</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Description</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/users/permissions/</code></td>
+                            <td>Create permission</td>
+                            <td><code>permission.manage</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/users/permissions/</code></td>
+                            <td>Get all permissions</td>
+                            <td><code>permission.manage</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/users/permissions/assign</code></td>
+                            <td>Assign permission to role</td>
+                            <td><code>permission.manage</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/users/permissions/revoke</code></td>
+                            <td>Revoke permission from role</td>
+                            <td><code>permission.manage</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="master">
+            <h2>3. HCGS Master Data</h2>
+            <p>Reference data for the HCGS module.</p>
+
+            <h3>Table: <code>hc_departemen</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/master/departemen</code></td>
+                            <td><code>departemen.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/master/departemen</code></td>
+                            <td><code>departemen.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/master/departemen/:id</code></td>
+                            <td><code>departemen.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/master/departemen/:id</code></td>
+                            <td><code>departemen.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hc_jabatan</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/master/jabatan</code></td>
+                            <td><code>jabatan.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/master/jabatan</code></td>
+                            <td><code>jabatan.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/master/jabatan/:id</code></td>
+                            <td><code>jabatan.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/master/jabatan/:id</code></td>
+                            <td><code>jabatan.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hc_job_site</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/master/job-site</code></td>
+                            <td><code>jobsite.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/master/job-site</code></td>
+                            <td><code>jobsite.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/master/job-site/:id</code></td>
+                            <td><code>jobsite.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/master/job-site/:id</code></td>
+                            <td><code>jobsite.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hc_kontrak</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/master/kontrak</code></td>
+                            <td><code>kontrak.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/master/kontrak</code></td>
+                            <td><code>kontrak.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/master/kontrak/:id</code></td>
+                            <td><code>kontrak.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/master/kontrak/:id</code></td>
+                            <td><code>kontrak.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="employee">
+            <h2>4. HCGS Employee Data</h2>
+            <p>Main employee records and related attributes.</p>
+
+            <h3>Table: <code>hc_pegawai</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Description</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/me</code></td>
+                            <td>Get current logged-in employee</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/pegawai/</code></td>
+                            <td>Get all employees</td>
+                            <td><code>pegawai.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/pegawai/:id</code></td>
+                            <td>Get employee by ID</td>
+                            <td><code>pegawai.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/pegawai/:id</code></td>
+                            <td>Update employee</td>
+                            <td><code>pegawai.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/pegawai/:id/biodata/view</code></td>
+                            <td>Preview Biodata (HTML)</td>
+                            <td><code>pegawai.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/pegawai/:id/biodata/download</code></td>
+                            <td>Download Biodata (PDF)</td>
+                            <td><code>pegawai.read</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hca_detail_personal</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/detail-personal</code></td>
+                            <td><code>detailpersonal.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/detail-personal</code></td>
+                            <td><code>detailpersonal.read</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hca_identitas</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/identitas</code></td>
+                            <td><code>identitas.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/identitas</code></td>
+                            <td><code>identitas.read</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hca_keluarga</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/keluarga</code></td>
+                            <td><code>keluarga.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/keluarga</code></td>
+                            <td><code>keluarga.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/keluarga/:id</code></td>
+                            <td><code>keluarga.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/keluarga/:id</code></td>
+                            <td><code>keluarga.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hca_kontak_darurat</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/kontak-darurat</code></td>
+                            <td><code>kontakdarurat.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/kontak-darurat</code></td>
+                            <td><code>kontakdarurat.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/kontak-darurat/:id</code></td>
+                            <td><code>kontakdarurat.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/kontak-darurat/:id</code></td>
+                            <td><code>kontakdarurat.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hca_ahli_waris</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/ahli-waris</code></td>
+                            <td><code>ahliwaris.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/ahli-waris</code></td>
+                            <td><code>ahliwaris.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/ahli-waris/:id</code></td>
+                            <td><code>ahliwaris.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/ahli-waris/:id</code></td>
+                            <td><code>ahliwaris.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hca_berkas</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/berkas</code></td>
+                            <td><code>berkas.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/berkas</code></td>
+                            <td><code>berkas.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/berkas/:id</code></td>
+                            <td><code>berkas.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hcb_riwayat_kontrak</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/riwayat-kontrak</code></td>
+                            <td><code>riwayatkontrak.create</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/riwayat-kontrak</code></td>
+                            <td><code>riwayatkontrak.read</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/riwayat-kontrak/:id</code></td>
+                            <td><code>riwayatkontrak.update</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/riwayat-kontrak/:id</code></td>
+                            <td><code>riwayatkontrak.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="salary">
+            <h2>5. Salary Slips</h2>
+            <p>Management of salary slips, including upload, draft review, and finalization.</p>
+
+            <h3>Table: <code>hc_temp_slip_gaji</code> (Drafts)</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Description</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/slip-gaji/upload</code></td>
+                            <td>Upload Excel to create drafts</td>
+                            <td><code>slipgaji.upload</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/slip-gaji/draft/:batchID</code></td>
+                            <td>Get drafts by batch</td>
+                            <td><code>slipgaji.upload</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td><code>/hcgs/slip-gaji/draft/:id</code></td>
+                            <td>Update draft item</td>
+                            <td><code>slipgaji.upload</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td><code>/hcgs/slip-gaji/submit/:batchID</code></td>
+                            <td>Finalize drafts to main table</td>
+                            <td><code>slipgaji.upload</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Table: <code>hc_final_slip_gaji</code> (Final)</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="120">Method</th>
+                            <th width="300">Endpoint</th>
+                            <th>Description</th>
+                            <th>Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/slip-gaji/</code></td>
+                            <td>Get all final slips</td>
+                            <td><code>slipgaji.read_all</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/slip-gaji/me/history</code></td>
+                            <td>Get my slip history</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/slip-gaji/me/view</code></td>
+                            <td>View my slip (HTML)</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/slip-gaji/me/download</code></td>
+                            <td>Download my slip (PDF)</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/slip-gaji/:id/view</code></td>
+                            <td>View any slip (HTML)</td>
+                            <td><code>slipgaji.view</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td><code>/hcgs/slip-gaji/:id/download</code></td>
+                            <td>Download any slip (PDF)</td>
+                            <td><code>slipgaji.download</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td><code>/hcgs/slip-gaji/:id</code></td>
+                            <td>Delete final slip</td>
+                            <td><code>slipgaji.delete</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Upload & Draft Workflow</h3>
+            <div class="code-block">
+                <button class="copy-btn">Copy</button>
+                <pre><code>// 1. Upload Excel
+POST /hcgs/slip-gaji/upload
+Content-Type: multipart/form-data
+Body: file=(binary), tipe_slip="driver_operator"
+
+// 2. Review Drafts
+GET /hcgs/slip-gaji/draft/{batch_id}
+
+// 3. Fix Invalid Slips
+PUT /hcgs/slip-gaji/draft/{id}
+{ "nrp": "CORRECT_NRP" }
+
+// 4. Submit Batch
+POST /hcgs/slip-gaji/submit/{batch_id}</code></pre>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Copy to Clipboard
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const code = btn.nextElementSibling.innerText;
+                navigator.clipboard.writeText(code);
+                
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied!';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                }, 2000);
+            });
+        });
+
+        // Active Link Highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
