@@ -19,6 +19,12 @@ type TurnstileResponse struct {
 }
 
 func VerifyCaptcha(token string) error {
+	// Development bypass - set BYPASS_CAPTCHA=true in .env to skip verification
+	if os.Getenv("BYPASS_CAPTCHA") == "true" {
+		fmt.Println("[DEBUG] Captcha verification bypassed")
+		return nil
+	}
+
 	secretKey := os.Getenv("TURNSTILE_SECRET_KEY")
 	if secretKey == "" {
 		// If no secret key is configured, we might want to skip verification (dev mode)
