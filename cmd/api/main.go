@@ -211,12 +211,15 @@ func main() {
 
 	proxy := httputil.NewSingleHostReverseProxy(hcgsURL)
 
-	// Custom Director to ensure headers are passed correctly if needed
+	// Custom Director to ensure headers are passed correctly
 	originalDirector := proxy.Director
 	proxy.Director = func(req *http.Request) {
 		originalDirector(req)
 		// Ensure Host header matches target
 		req.Host = hcgsURL.Host
+		// Preserve Authorization header (already inherited from original request)
+		// Preserve cookies for token-based auth
+		// The original request headers including Authorization are automatically copied
 	}
 
 	proxy.ModifyResponse = func(resp *http.Response) error {
