@@ -197,14 +197,13 @@ func SecurityHeadersMiddleware() gin.HandlerFunc {
 		// Restrict sources for scripts, styles, images, etc.
 		// Adjust 'self' and other domains as needed.
 		// Added 'unsafe-inline' and 'unsafe-eval' for now as Vue/Vite might need them in dev.
-		// Added cloudflare.com for Turnstile (wildcard for all subdomains).
+		// Added cloudflare.com for Turnstile.
 		csp := "default-src 'self'; " +
-			"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.cloudflare.com https://challenges.cloudflare.com; " +
+			"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com; " +
 			"style-src 'self' 'unsafe-inline'; " +
-			"img-src 'self' data: blob: https://*.cloudflare.com; " +
-			"frame-src https://*.cloudflare.com https://challenges.cloudflare.com; " +
-			"connect-src 'self' https://*.cloudflare.com https://challenges.cloudflare.com; " +
-			"font-src 'self' data:;"
+			"img-src 'self' data: blob:; " +
+			"frame-src https://challenges.cloudflare.com; " +
+			"connect-src 'self' https://challenges.cloudflare.com;"
 		c.Header("Content-Security-Policy", csp)
 
 		// Referrer Policy
